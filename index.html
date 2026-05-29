@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generator UserID & Kode Tiket</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Consolas, monospace;
+}
+
+body{
+    background:#0b1020;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:900px;
+}
+
+.card{
+    background:#101827;
+    border:2px solid #ff2d7a;
+    border-radius:15px;
+    overflow:hidden;
+}
+
+.header{
+    background:#ff2d7a;
+    color:white;
+    padding:15px;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.content{
+    padding:20px;
+}
+
+.row{
+    display:grid;
+    grid-template-columns:1fr 1fr auto;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+input{
+    background:#0f172a;
+    color:white;
+    border:1px solid #374151;
+    border-radius:8px;
+    padding:12px;
+    font-size:15px;
+}
+
+button{
+    border:none;
+    border-radius:8px;
+    padding:12px 18px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-add{
+    background:#22c55e;
+    color:white;
+}
+
+.btn-copy{
+    background:#3b82f6;
+    color:white;
+}
+
+.btn-clear{
+    background:#ef4444;
+    color:white;
+}
+
+.output{
+    background:#050b18;
+    border:1px solid #ff2d7a;
+    border-radius:10px;
+    min-height:300px;
+    padding:15px;
+    color:#ff6b9d;
+    white-space:pre-wrap;
+    overflow:auto;
+}
+
+.actions{
+    margin-top:15px;
+    display:flex;
+    gap:10px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+
+        <div class="header">
+            Generator UserID + Kode Tiket
+        </div>
+
+        <div class="content">
+
+            <div class="row">
+                <input type="text" id="userid" placeholder="Masukkan User ID">
+                <input type="text" id="txid" placeholder="Masukkan Kode Tiket">
+                <button class="btn-add" onclick="tambahData()">Tambah</button>
+            </div>
+
+            <div class="output" id="hasil"></div>
+
+            <div class="actions">
+                <button class="btn-copy" onclick="copyHasil()">Copy Semua</button>
+                <button class="btn-clear" onclick="hapusSemua()">Hapus Semua</button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+let dataList = [];
+
+function tambahData(){
+
+    const userid = document.getElementById('userid').value.trim();
+    const txid = document.getElementById('txid').value.trim();
+
+    if(userid === '' || txid === ''){
+        alert('User ID dan Kode Tiket wajib diisi');
+        return;
+    }
+
+    dataList.push(`${userid}, ${txid}`);
+
+    renderData();
+
+    document.getElementById('userid').value='';
+    document.getElementById('txid').value='';
+    document.getElementById('userid').focus();
+}
+
+function renderData(){
+    document.getElementById('hasil').textContent =
+    dataList.join('\n');
+}
+
+function copyHasil(){
+
+    if(dataList.length===0){
+        alert('Belum ada data');
+        return;
+    }
+
+    navigator.clipboard.writeText(dataList.join('\n'));
+
+    alert('Berhasil disalin');
+}
+
+function hapusSemua(){
+
+    if(!confirm('Hapus semua data?')){
+        return;
+    }
+
+    dataList = [];
+    renderData();
+}
+</script>
+
+</body>
+</html>
