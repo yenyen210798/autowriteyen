@@ -3,183 +3,216 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generator UserID & Kode Tiket</title>
+<title>Bulk UserID & Ticket Generator</title>
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Consolas, monospace;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Consolas, monospace;
 }
 
 body{
-    background:#0b1020;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
+background:#0b1020;
+padding:20px;
+color:#fff;
 }
 
 .container{
-    width:100%;
-    max-width:900px;
+max-width:1200px;
+margin:auto;
 }
 
 .card{
-    background:#101827;
-    border:2px solid #ff2d7a;
-    border-radius:15px;
-    overflow:hidden;
+background:#101827;
+border:2px solid #ff2d7a;
+border-radius:15px;
+overflow:hidden;
 }
 
 .header{
-    background:#ff2d7a;
-    color:white;
-    padding:15px;
-    text-align:center;
-    font-size:22px;
-    font-weight:bold;
+background:#ff2d7a;
+padding:15px;
+font-size:22px;
+font-weight:bold;
+text-align:center;
 }
 
 .content{
-    padding:20px;
+padding:20px;
 }
 
-.row{
-    display:grid;
-    grid-template-columns:1fr 1fr auto;
-    gap:10px;
-    margin-bottom:20px;
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
 }
 
-input{
-    background:#0f172a;
-    color:white;
-    border:1px solid #374151;
-    border-radius:8px;
-    padding:12px;
-    font-size:15px;
+textarea{
+width:100%;
+height:350px;
+background:#050b18;
+border:1px solid #374151;
+border-radius:10px;
+padding:15px;
+color:#fff;
+resize:none;
+}
+
+.buttons{
+margin-top:15px;
+display:flex;
+gap:10px;
 }
 
 button{
-    border:none;
-    border-radius:8px;
-    padding:12px 18px;
-    cursor:pointer;
-    font-weight:bold;
+padding:12px 20px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
 }
 
-.btn-add{
-    background:#22c55e;
-    color:white;
+.generate{
+background:#22c55e;
+color:white;
 }
 
-.btn-copy{
-    background:#3b82f6;
-    color:white;
+.copy{
+background:#3b82f6;
+color:white;
 }
 
-.btn-clear{
-    background:#ef4444;
-    color:white;
+.clear{
+background:#ef4444;
+color:white;
 }
 
 .output{
-    background:#050b18;
-    border:1px solid #ff2d7a;
-    border-radius:10px;
-    min-height:300px;
-    padding:15px;
-    color:#ff6b9d;
-    white-space:pre-wrap;
-    overflow:auto;
+margin-top:20px;
+background:#050b18;
+border:1px solid #ff2d7a;
+border-radius:10px;
+padding:15px;
+min-height:300px;
+white-space:pre-wrap;
+color:#ff6b9d;
+overflow:auto;
 }
 
-.actions{
-    margin-top:15px;
-    display:flex;
-    gap:10px;
+.info{
+margin-top:10px;
+color:#9ca3af;
 }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="card">
+<div class="card">
 
-        <div class="header">
-            Generator UserID + Kode Tiket
-        </div>
+<div class="header">
+Bulk UserID + Ticket Generator
+</div>
 
-        <div class="content">
+<div class="content">
 
-            <div class="row">
-                <input type="text" id="userid" placeholder="Masukkan User ID">
-                <input type="text" id="txid" placeholder="Masukkan Kode Tiket">
-                <button class="btn-add" onclick="tambahData()">Tambah</button>
-            </div>
+<div class="grid">
 
-            <div class="output" id="hasil"></div>
+<div>
+<h3>User ID</h3>
+<textarea id="userid"
+placeholder="1 User ID per baris"></textarea>
+</div>
 
-            <div class="actions">
-                <button class="btn-copy" onclick="copyHasil()">Copy Semua</button>
-                <button class="btn-clear" onclick="hapusSemua()">Hapus Semua</button>
-            </div>
+<div>
+<h3>Kode Tiket</h3>
+<textarea id="txid"
+placeholder="1 Kode Tiket per baris"></textarea>
+</div>
 
-        </div>
+</div>
 
-    </div>
+<div class="buttons">
+<button class="generate" onclick="generateData()">Generate</button>
+<button class="copy" onclick="copyResult()">Copy Hasil</button>
+<button class="clear" onclick="clearAll()">Hapus Semua</button>
+</div>
+
+<div class="info" id="counter">
+Total Data : 0
+</div>
+
+<div class="output" id="hasil"></div>
+
+</div>
+</div>
 </div>
 
 <script>
-let dataList = [];
 
-function tambahData(){
+function generateData(){
 
-    const userid = document.getElementById('userid').value.trim();
-    const txid = document.getElementById('txid').value.trim();
+let users=document.getElementById('userid')
+.value
+.split('\n')
+.map(x=>x.trim())
+.filter(x=>x!='');
 
-    if(userid === '' || txid === ''){
-        alert('User ID dan Kode Tiket wajib diisi');
-        return;
-    }
+let txids=document.getElementById('txid')
+.value
+.split('\n')
+.map(x=>x.trim())
+.filter(x=>x!='');
 
-    dataList.push(`${userid}, ${txid}`);
+if(users.length!==txids.length){
 
-    renderData();
+alert(
+'Jumlah User ID ('+
+users.length+
+') dan Kode Tiket ('+
+txids.length+
+') harus sama.'
+);
 
-    document.getElementById('userid').value='';
-    document.getElementById('txid').value='';
-    document.getElementById('userid').focus();
+return;
 }
 
-function renderData(){
-    document.getElementById('hasil').textContent =
-    dataList.join('\n');
+let hasil=[];
+
+for(let i=0;i<users.length;i++){
+hasil.push(users[i]+', '+txids[i]);
 }
 
-function copyHasil(){
+document.getElementById('hasil').textContent=
+hasil.join('\n');
 
-    if(dataList.length===0){
-        alert('Belum ada data');
-        return;
-    }
-
-    navigator.clipboard.writeText(dataList.join('\n'));
-
-    alert('Berhasil disalin');
+document.getElementById('counter').textContent=
+'Total Data : '+hasil.length;
 }
 
-function hapusSemua(){
+function copyResult(){
 
-    if(!confirm('Hapus semua data?')){
-        return;
-    }
+let text=document.getElementById('hasil').textContent;
 
-    dataList = [];
-    renderData();
+if(text===''){
+alert('Belum ada hasil');
+return;
+}
+
+navigator.clipboard.writeText(text);
+
+alert('Berhasil disalin');
+}
+
+function clearAll(){
+
+document.getElementById('userid').value='';
+document.getElementById('txid').value='';
+document.getElementById('hasil').textContent='';
+document.getElementById('counter').textContent='Total Data : 0';
+
 }
 </script>
 
